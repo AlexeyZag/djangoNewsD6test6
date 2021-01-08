@@ -20,7 +20,7 @@ Post
         <br>
         {% else %}
         <h7> - Уже подписаны</h7>
-        <button> <a href="{% url 'insubscribe' tag.id  %}">отписаться?</a> </button><br>
+        <button> <a href="{% url 'unsubscribe' tag.id  %}">отписаться?</a> </button><br>
 {% endif %}
     {% endfor %}
 {% endblock content %}

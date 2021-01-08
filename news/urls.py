@@ -1,5 +1,5 @@
 from django.urls import path
-from.views import AuthorsList, AuthorDetail, PostList, PostDetail, SearchList, SearchDetail, PostUpdateView, PostDeleteView, AddProtectedView, CategoryAdd, CategoryRemove
+from.views import AuthorsList, AuthorDetail, PostList, PostDetail, SearchList, SearchDetail, PostUpdateView, PostDeleteView, AddProtectedView, CategoryAdd, CategoryRemove, AppointmentView
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,8 +15,9 @@ urlpatterns = [
     path('<int:pk>/edit/', PostUpdateView.as_view(), name= 'post_update'),
     path('<int:pk>/delete/', PostDeleteView.as_view(), name= 'post_delete'),
     #path('upgrade/', upgrade_me, name = 'upgrade'),
-    path('categories/<int:pk>', CategoryAdd.as_view(), name= 'subscribe'),
-    path('insubscribe/<int:pk>', CategoryRemove.as_view(), name= 'insubscribe'),
+    path('subscribe/<int:pk>', CategoryAdd.as_view(), name= 'subscribe'),
+    path('unsubscribe/<int:pk>', CategoryRemove.as_view(), name= 'unsubscribe'),
+    path('categories/appointment/', AppointmentView.as_view(), name= 'appointments'),
 
 ]
 

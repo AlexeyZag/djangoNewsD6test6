@@ -1,4 +1,5 @@
 from django.shortcuts import render, reverse, redirect
+from django.template.loader import render_to_string
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Author, Post, User, Category
@@ -9,12 +10,39 @@ from .forms import PostForm, CategoryForm
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.core.mail import EmailMultiAlternatives
+class AppointmentView(View):
+    def get(self, request, *args, **kwargs):
+        return render(self.request, 'post.html', {})
 
+    def post(self, request, *args, **kwargs):
+        appointment = Post(
+        )
+        appointment.save()
+
+        html_content = render_to_string(
+            'appointment.html',
+            {
+                'post': appointment,
+            }
+        )
+
+        # в конструкторе уже знакомые нам параметры, да? Называются правда немного по другому, но суть та же.
+        msg = EmailMultiAlternatives(
+            subject=f'{appointment.headline}',
+            body=appointment.headline,  # это то же, что и message
+            from_email='zagaalexey@yandex.ru',
+            to=['alex8.8@mail.ru'],  # это то же, что и recipients_list
+        )
+        msg.attach_alternative(html_content, "text/html")  # добавляем html
+
+        msg.send()
+        return redirect('')
 
 class CategoryAdd(CreateView):
     template_name = 'subscribe.html'
     model = Category
-    queryset = Category.objects.all()
+    queryset = Post.objects.all()
     form_class = CategoryForm
 
 
@@ -28,6 +56,7 @@ class CategoryRemove(CreateView):
     model = Category
     queryset = Category.objects.all()
     form_class = CategoryForm
+
 
     def post(self, request, *args, **kwargs):
         user = self.request.user
