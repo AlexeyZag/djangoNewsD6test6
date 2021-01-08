@@ -1,5 +1,5 @@
 from django.forms import ModelForm, TextInput, Textarea, Select, SelectMultiple, CheckboxSelectMultiple
-from .models import Post
+from .models import Post, Category
 class PostForm(ModelForm):
     class Meta:
         model = Post
@@ -21,3 +21,8 @@ class PostForm(ModelForm):
                 'size': '100',
             }),
         }
+
+class CategoryForm(ModelForm):
+    class Meta:
+        model = Category
+        fields = []

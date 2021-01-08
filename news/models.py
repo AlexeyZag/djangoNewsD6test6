@@ -113,3 +113,12 @@ class Comment(models.Model):
 #Category.objects.all()[2].subscribers.all().values('username')
 #Category.objects.filter(tag='Спорт').values('subscribers__username').values()
 #print(user in Category.objects.filter(tag='Спорт').values('subscribers__username')[0].values())
+#Category.objects.get(tag= 'Спорт').subscribers.add(User.objects.get(username='author'))
+#Category.objects.all()[0].id
+#a = Post.objects.get(pk=4).categories.all().values('tag', 'id')
+#a[0]['tag']
+#Category.objects.filter(subscribers= User.objects.get(username='admin'))
+#Category.objects.filter(subscribers= User.objects.get(username='admin')).values_list()
+#Category.objects.filter(subscribers= User.objects.get(username=str(user))).filter(tag = 'Спорт').id
+#Category.objects.all().get(pk=1)
+#Category.objects.get(pk=1).subscribers.remove(User.objects.get(username='admin'))

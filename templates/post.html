@@ -10,14 +10,17 @@ Post
     <h1>{{ post.article_default_news }}</h1>
     <h5>Заголовок: {{ post.headline }}</h5><br />
     <h7>Дата публикации: {{ post.create_time|date:'M d Y h:m' }}</h7><br />
-    <h7>Текст:<br />
-        {{ post.text|censor }}</h7><br />
+    <h7>Текст:</h7><br />
+        {{ post.text|censor }}<br />
     <h7>Автор: {{ post.author }}</h7><br />
-
-    {% for tag in tags %}
-         {{ tag.get('Спорт')}}
-    {% if tag %}
-<button> <a href="/">подписаться!</a> </button>
+    {% for tag in list %}
+    {{ tag.1 }}
+    {% if tag.0 %}
+<button> <a href="{% url 'subscribe' tag.0  %}">подписаться!</a> </button>
+        <br>
+        {% else %}
+        <h7> - Уже подписаны</h7><br>
 {% endif %}
     {% endfor %}
 {% endblock content %}
+

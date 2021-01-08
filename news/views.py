@@ -5,13 +5,24 @@ from .models import Author, Post, User, Category
 from datetime import datetime
 from django.core.paginator import Paginator
 from .filters import PostFilter
-from .forms import PostForm
+from .forms import PostForm, CategoryForm
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 
+class CategoryAdd(CreateView):
+    template_name = 'subscribe.html'
+    model = Category
+    queryset = Category.objects.all()
+    form_class = CategoryForm
 
 
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        id = self.kwargs.get('pk')
+        Category.objects.get(pk=id).subscribers.add(User.objects.get(username=str(user)))
+        return redirect('/')
 
 class AddProtectedView(PermissionRequiredMixin, CreateView):
     template_name = 'add_article.html'
@@ -66,26 +77,32 @@ class PostDetail(DetailView):
         context = super().get_context_data(**kwargs)
         id = self.kwargs.get('pk')
         user = self.request.user
-        a = 'Категории: '
         c = []
         for i in Post.objects.get(pk=id).categories.all().values('tag'):
-            a += (i['tag'] + ' ')
             c.append(i['tag'])
-
+        context['post_categories'] = Post.objects.get(pk=id).categories.all().values_list()
+        context['user_categories'] = Category.objects.filter(subscribers= User.objects.get(username=str(user))).values_list()
+        context['categories'] = Category.objects.all()
+        q = []
+        for tag in context['post_categories']:
+            if tag in context['user_categories']:
+                q.append((False, tag[1]))
+            else:
+                q.append((tag[0], tag[1]))
+        context['list'] = q
         b = {}
-        for tag in c:
-            for name in range(len(Category.objects.filter(tag=tag).values('subscribers__username'))):
-                if str(user) in Category.objects.filter(tag=tag).values('subscribers__username')[name].values():
-                    b[tag] = True
-                    break
-                else:
-                    b[tag] = False
-        context['categories'] = a
-        context['user'] = user
-        context['c'] = c
+
         context['tags'] = b
         return context
 
+"""@login_required
+def upgrade_me(request):
+    user = request.user
+    tag = request.path_info
+    if not request.user.groups.filter(name='authors').exists():
+        authors_group.user_set.add(user)
+        Author.objects.create(author=User.objects.get(username=user))
+    return redirect('/')"""
 class PostUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'add_article.html'
     form_class = PostForm
