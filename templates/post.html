@@ -13,13 +13,14 @@ Post
     <h7>Текст:</h7><br />
         {{ post.text|censor }}<br />
     <h7>Автор: {{ post.author }}</h7><br />
-    {% for tag in list %}
-    {{ tag.1 }}
-    {% if tag.0 %}
-<button> <a href="{% url 'subscribe' tag.0  %}">подписаться!</a> </button>
+    {% for tag in post_categories %}
+    {{ tag.tag }}
+    {% if tag not in user_categories %}
+<button> <a href="{% url 'subscribe' tag.id  %}">подписаться!</a> </button>
         <br>
         {% else %}
-        <h7> - Уже подписаны</h7><br>
+        <h7> - Уже подписаны</h7>
+        <button> <a href="{% url 'insubscribe' tag.id  %}">отписаться?</a> </button><br>
 {% endif %}
     {% endfor %}
 {% endblock content %}

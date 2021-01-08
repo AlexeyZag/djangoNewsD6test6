@@ -23,7 +23,17 @@ class CategoryAdd(CreateView):
         id = self.kwargs.get('pk')
         Category.objects.get(pk=id).subscribers.add(User.objects.get(username=str(user)))
         return redirect('/')
+class CategoryRemove(CreateView):
+    template_name = 'unsubscribe.html'
+    model = Category
+    queryset = Category.objects.all()
+    form_class = CategoryForm
 
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        id = self.kwargs.get('pk')
+        Category.objects.get(pk=id).subscribers.remove(User.objects.get(username=str(user)))
+        return redirect('/')
 class AddProtectedView(PermissionRequiredMixin, CreateView):
     template_name = 'add_article.html'
     form_class = PostForm
@@ -77,22 +87,8 @@ class PostDetail(DetailView):
         context = super().get_context_data(**kwargs)
         id = self.kwargs.get('pk')
         user = self.request.user
-        c = []
-        for i in Post.objects.get(pk=id).categories.all().values('tag'):
-            c.append(i['tag'])
-        context['post_categories'] = Post.objects.get(pk=id).categories.all().values_list()
-        context['user_categories'] = Category.objects.filter(subscribers= User.objects.get(username=str(user))).values_list()
-        context['categories'] = Category.objects.all()
-        q = []
-        for tag in context['post_categories']:
-            if tag in context['user_categories']:
-                q.append((False, tag[1]))
-            else:
-                q.append((tag[0], tag[1]))
-        context['list'] = q
-        b = {}
-
-        context['tags'] = b
+        context['post_categories'] = Post.objects.get(pk=id).categories.all()
+        context['user_categories'] = Category.objects.filter(subscribers= User.objects.get(username=str(user)))
         return context
 
 """@login_required
